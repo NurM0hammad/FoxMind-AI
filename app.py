@@ -633,7 +633,7 @@ if __name__ == '__main__':
     else:
         print("❌ ERROR: No Gemini API key found")
         print("📝 Please add GEMINI_API_KEY to your .env file")
-        print("🔑 Get your API key from: https://foxmind-ai.onrender.com")
+        print("🔑 Get your API key from: https://makersuite.google.com/app/apikey")
     
     print(f"\n🌐 Server running at: http://localhost:{port}")
     print("="*60 + "\n")
