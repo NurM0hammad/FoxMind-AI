@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FoxMind AI - Next Generation Chatbot</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="background">
+        <div class="gradient-sphere"></div>
+        <div class="gradient-sphere-2"></div>
+        <div class="grid-pattern"></div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="fas fa-brain"></i>
+                    <span>FoxMind AI</span>
+                </div>
+                <button class="new-chat-btn" id="newChatBtn">
+                    <i class="fas fa-plus"></i>
+                    <span>New Chat</span>
+                </button>
+            </div>
+
+            <div class="conversations-header">
+                <h3>Recent Chats</h3>
+                <span class="conversation-count" id="conversationCount">0</span>
+            </div>
+
+            <div class="conversations-list" id="conversationsList">
+                <!-- Conversations will be dynamically loaded here -->
+                <div class="loading-conversations">
+                    <div class="loader-small"></div>
+                    <span>Loading conversations...</span>
+                </div>
+            </div>
+
+            <div class="sidebar-footer">
+                <div class="api-status {{ 'connected' if api_configured else 'disconnected' }}" id="apiStatus">
+                    <i class="fas {{ 'fa-check-circle' if api_configured else 'fa-exclamation-circle' }}"></i>
+                    <span>{{ 'API Connected' if api_configured else 'API Disconnected' }}</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Chat Area -->
+        <main class="main-content">
+            <!-- Chat Header -->
+            <header class="chat-header">
+                <button class="menu-toggle" id="menuToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+
+                <div class="header-info">
+                    <h1 id="chatTitle">New Conversation</h1>
+                    <div class="header-badges">
+                        <span class="badge model-badge" id="currentModel">
+                            <i class="fas fa-robot"></i>
+                            <span>Loading...</span>
+                        </span>
+                        <span class="badge personality-badge" id="currentPersonality">
+                            <i class="fas fa-smile"></i>
+                            <span>Default</span>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="header-controls">
+                    <div class="control-group">
+                        <label for="modelSelect">Model</label>
+                        <select id="modelSelect" class="glass-select">
+                            {% for model_id, model_info in models.items() %}
+                            <option value="{{ model_id }}" {% if loop.first %}selected{% endif %}>
+                                {{ model_info.name }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="personalitySelect">Personality</label>
+                        <select id="personalitySelect" class="glass-select">
+                            {% for personality in personalities %}
+                            <option value="{{ personality }}" {% if personality == 'default' %}selected{% endif %}>
+                                {{ personality|capitalize }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="control-group temperature-control">
+                        <label for="temperature">Temperature <span id="tempValue">0.7</span></label>
+                        <input type="range" id="temperature" min="0" max="1" step="0.1" value="0.7">
+                    </div>
+
+                    <button class="icon-btn reset-btn" id="resetBtn" title="Reset Conversation">
+                        <i class="fas fa-undo-alt"></i>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Messages Area -->
+            <div class="messages-container" id="messagesContainer">
+                <div class="welcome-screen" id="welcomeScreen">
+                    <div class="welcome-icon">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <h2>Hello, I'm Fox</h2>
+                    <p>Your intelligent assistant powered by Google's most advanced AI model</p>
+                    <div class="suggestions">
+                        <button class="suggestion-btn" data-prompt="What can you help me with?">
+                            <i class="fas fa-question-circle"></i>
+                            What can you do?
+                        </button>
+                        <button class="suggestion-btn" data-prompt="Write a Python function to calculate fibonacci">
+                            <i class="fas fa-code"></i>
+                            Code assistance
+                        </button>
+                        <button class="suggestion-btn" data-prompt="Explain quantum computing simply">
+                            <i class="fas fa-atom"></i>
+                            Explain concepts
+                        </button>
+                        <button class="suggestion-btn" data-prompt="Help me brainstorm creative ideas">
+                            <i class="fas fa-lightbulb"></i>
+                            Brainstorm ideas
+                        </button>
+                    </div>
+                </div>
+                <!-- Messages will be dynamically inserted here -->
+            </div>
+
+            <!-- Input Area -->
+            <div class="input-container">
+                <form id="chatForm" class="input-form">
+                    <div class="input-wrapper">
+                        <textarea 
+                            id="messageInput" 
+                            placeholder="Message Fox AI..." 
+                            rows="1"
+                            autofocus
+                        ></textarea>
+                        <button type="submit" id="sendButton" disabled>
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                    <div class="input-footer">
+                        <span class="typing-hint">
+                            <i class="fas fa-enter"></i> Enter to send
+                        </span>
+                        <span class="typing-hint">
+                            <i class="fas fa-shift"></i> Shift + Enter for new line
+                        </span>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="{{ url_for('static', filename='js/chat.js') }}"></script>
+</body>
+</html>
