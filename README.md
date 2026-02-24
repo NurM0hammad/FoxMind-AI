@@ -82,13 +82,6 @@
 - 🔄 **CI/CD** - Auto-deploy on push
 
 ---
-
-## 📁 Project Structure
-gemini-ai-chatbot/
-├── app.py # Main Flask application
-├── requirements.txt # Python dependencies
-├── .env # Environment variables
-├── conversations/ # Stored chat history
 ├── static/ # Static assets
 │ ├── css/ # Stylesheets
 │ └── js/ # JavaScript files
