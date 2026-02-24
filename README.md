@@ -81,10 +81,3 @@
 - 🔒 **Environment Variables** - Secure configuration
 - 🔄 **CI/CD** - Auto-deploy on push
 
----
-├── static/ # Static assets
-│ ├── css/ # Stylesheets
-│ └── js/ # JavaScript files
-└── templates/ # HTML templates
-└── index.html # Main chat interface
-
